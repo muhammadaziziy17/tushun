@@ -274,7 +274,7 @@ Savollar, takliflar yoki hamkorlik uchun murojaat qiling:
 
 <div align="center">
 
-**Tushun** — bilimni qulay qilish uchun yaratilgan 🇺🇿
+**Tushun** — bilimni qulay qilish uchun yaratilgan
 
 *Agar loyiha foydali bo'lsa, ⭐ yulduz qo'yishni unutmang!*
 
