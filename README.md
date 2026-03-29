@@ -272,12 +272,6 @@ Savollar, takliflar yoki hamkorlik uchun murojaat qiling:
 
 ---
 
-## 📄 Litsenziya
-
-Ushbu loyiha [MIT License](LICENSE) ostida tarqatiladi.
-
----
-
 <div align="center">
 
 **Tushun** — bilimni qulay qilish uchun yaratilgan 🇺🇿
