@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
-    <link rel="shortcut icon" href="{{ secure_asset('images/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}" type="image/x-icon">
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -116,9 +116,9 @@
         <footer class="mt-8 flex justify-between gap-2 text-xs text-gray-400 dark:text-gray-600 w-full">
             <a class="hover:text-primary" href="https://t.me/ismlvmz" target="_blank">Yordam</a>
             <div class="flex gap-4">
-                <a class="hover:text-primary" href="{{ secure_asset('docs/privacy.pdf') }}"
+                <a class="hover:text-primary" href="{{ asset('docs/privacy.pdf') }}"
                     target="_blank">Maxfiylik</a>
-                <a class="hover:text-primary" href="{{ secure_asset('docs/terms.pdf') }}" target="_blank">Shartlar</a>
+                <a class="hover:text-primary" href="{{ asset('docs/terms.pdf') }}" target="_blank">Shartlar</a>
             </div>
         </footer>
     </main>

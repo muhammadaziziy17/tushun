@@ -61,7 +61,7 @@
         <header class="flex items-center justify-between px-6 py-8 md:px-12 lg:px-24">
             <a href="/" class="flex items-center gap-2 group cursor-default">
                 <div class="size-8 text-primary">
-                    <img src="{{ secure_asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo"
+                    <img src="{{ asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo"
                         class="w-8 h-8 object-contain" />
                 </div>
                 <h2 class="text-primary dark:text-white text-xl font-bold leading-tight tracking-tight uppercase">TUSHUN
@@ -77,7 +77,7 @@
                     class="relative w-full aspect-[4/3] max-w-lg rounded-3xl overflow-hidden bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
                     <img alt="Maintenance illustration" class="w-full h-full object-cover opacity-90"
                         data-alt="Futuristic robot polishing a giant glowing lightbulb in a laboratory"
-                        src="{{ secure_asset('images/503.png') }}" />
+                        src="{{ asset('images/503.png') }}" />
                     <!-- Floating Badge -->
                     <div
                         class="absolute top-6 right-6 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg flex items-center gap-2 border border-slate-100">
@@ -131,9 +131,9 @@
         <footer
             class="w-full px-6 py-12 md:px-24 flex flex-col md:flex-row items-center justify-between border-t border-slate-100 dark:border-slate-800 gap-6 mt-12">
             <div class="flex items-center gap-8 text-slate-400 text-sm font-medium">
-                <a class="hover:text-primary transition-colors" href="{{ secure_asset('docs/privacy.pdf') }}">Maxfiylik
+                <a class="hover:text-primary transition-colors" href="{{ asset('docs/privacy.pdf') }}">Maxfiylik
                     siyosati</a>
-                <a class="hover:text-primary transition-colors" href="{{ secure_asset('docs/terms.pdf') }}">Foydalanish
+                <a class="hover:text-primary transition-colors" href="{{ asset('docs/terms.pdf') }}">Foydalanish
                     shartlari</a>
             </div>
             <div class="flex items-center gap-4">

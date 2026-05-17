@@ -12,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <link rel="shortcut icon" href="{{ secure_asset('images/logo_without_bg.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('images/logo_without_bg.png') }}" type="image/x-icon">
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -50,7 +50,7 @@
             <!-- Logo Section -->
             <div class="flex items-center justify-center gap-3 mb-8">
                 <div class="text-primary dark:text-white">
-                    <img src="{{ secure_asset('images/logo_without_bg.png') }}" alt="Tushun Logo"
+                    <img src="{{ asset('images/logo_without_bg.png') }}" alt="Tushun Logo"
                         class="w-10 h-10 object-contain" />
                 </div>
                 <h1 class="text-2xl font-black tracking-tight text-primary dark:text-white uppercase">TUSHUN</h1>
@@ -197,9 +197,9 @@
             <footer class="mt-12 text-center text-slate-400 text-xs">
                 <p>© 2026 TUSHUN Platformasi. Muhammadaziz tomonidan yaratilgan.</p>
                 <div class="mt-2 flex justify-center gap-4">
-                    <a class="hover:text-primary" href="{{ secure_asset('docs/terms.pdf') }}">Foydalanish
+                    <a class="hover:text-primary" href="{{ asset('docs/terms.pdf') }}">Foydalanish
                         shartlari</a>
-                    <a class="hover:text-primary" href="{{ secure_asset('docs/privacy.pdf') }}">Maxfiylik
+                    <a class="hover:text-primary" href="{{ asset('docs/privacy.pdf') }}">Maxfiylik
                         siyosati</a>
                 </div>
             </footer>

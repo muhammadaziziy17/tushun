@@ -7,7 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>500 - Xatolik yuz berdi | TUSHUN</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link rel="shortcut icon" href="{{ secure_asset('images/logo_without_bg.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('images/logo_without_bg.png') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
         rel="stylesheet" />
     <link
@@ -65,7 +65,7 @@
         <div class="flex items-center gap-2">
             <a href="/" class="flex items-center gap-2">
                 <div class="w-8 h-8 flex items-center justify-center text-white">
-                    <img src="{{ secure_asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo" srcset="">
+                    <img src="{{ asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo" srcset="">
                 </div>
                 <span class="text-xl font-bold tracking-tight text-primary dark:text-white uppercase">TUSHUN</span>
             </a>
@@ -124,10 +124,10 @@
             </p>
             <div class="flex gap-8">
                 <a class="text-slate-500 hover:text-primary text-sm transition-colors"
-                    href="{{ secure_asset('docs/privacy.pdf') }}">Maxfiylik
+                    href="{{ asset('docs/privacy.pdf') }}">Maxfiylik
                     siyosati</a>
                 <a class="text-slate-500 hover:text-primary text-sm transition-colors"
-                    href="{{ secure_asset('docs/terms.pdf') }}">Shartlar</a>
+                    href="{{ asset('docs/terms.pdf') }}">Shartlar</a>
             </div>
         </div>
     </footer>

@@ -177,7 +177,7 @@
             background-color: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             transition: transform 0.3s ease, background-color 0.4s ease;
-            z-index: 40;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             gap: 0;
@@ -191,6 +191,8 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            position: relative;
+            z-index: 1;
         }
 
         #content-inner {
@@ -201,12 +203,13 @@
         @media (max-width: 1024px) {
             #sidebar {
                 transform: translateX(-100%);
-                width: 260px;
+                width: 280px;
+                z-index: 1000;
             }
 
             #sidebar.open {
                 transform: translateX(0);
-                box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
+                box-shadow: 10px 0 50px rgba(0, 0, 0, 0.2);
             }
 
             #content-area {
@@ -226,7 +229,7 @@
             height: 56px;
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border);
-            z-index: 50;
+            z-index: 500;
             display: flex;
             align-items: center;
             padding: 0 1.25rem;
@@ -240,7 +243,7 @@
             left: 0;
             height: 4px;
             background: linear-gradient(to right, var(--accent), #a78bfa);
-            z-index: 100;
+            z-index: 600;
             width: 0%;
             transition: width 0.15s ease;
         }
@@ -514,6 +517,20 @@
             cursor: pointer;
         }
 
+        .search-mark {
+            background: #fde68a;
+            color: #1f2933;
+            border-radius: 4px;
+            padding: 1px 2px;
+            box-shadow: inset 0 -2px 0 rgba(180, 83, 9, 0.25);
+        }
+
+        .search-mark.current {
+            background: #0B3961;
+            color: #fffdf8;
+            box-shadow: 0 0 0 3px rgba(11, 57, 97, 0.16);
+        }
+
         /* ═══════════════════════════════════════════
            FOCUS MODE
         ═══════════════════════════════════════════ */
@@ -687,6 +704,52 @@
             display: flex;
         }
 
+        #search-popup {
+            position: absolute;
+            bottom: calc(100% + 0.75rem);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(420px, calc(100vw - 24px));
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 0.65rem;
+            display: none;
+            gap: 0.45rem;
+            align-items: center;
+            box-shadow: 0 16px 46px rgba(0, 0, 0, 0.16);
+            z-index: 65;
+        }
+
+        #search-popup.open {
+            display: flex;
+        }
+
+        #reader-search-input {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid var(--border);
+            background: var(--bg-main);
+            color: var(--text-primary);
+            border-radius: 0.75rem;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.82rem;
+            outline: none;
+        }
+
+        #reader-search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        #search-count {
+            min-width: 44px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
         .theme-opt {
             display: flex;
             align-items: center;
@@ -740,6 +803,30 @@
             display: block;
         }
 
+        #reader-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 5.6rem;
+            transform: translate(-50%, 12px);
+            z-index: 70;
+            background: var(--text-primary);
+            color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.9rem;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        #reader-toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
         /* ═══════════════════════════════════════════
            SIDEBAR TOGGLE (mobile)
         ═══════════════════════════════════════════ */
@@ -748,11 +835,361 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.35);
-            z-index: 39;
+            z-index: 70;
         }
 
         #sidebar-overlay.open {
             display: block;
+        }
+
+        /* ═══════════════════════════════════════════
+           EDITORIAL OS READER SHELL
+        ═══════════════════════════════════════════ */
+        :root {
+            --bg-main: #fbfaf6;
+            --bg-card: #fffdf8;
+            --bg-sidebar: rgba(255, 253, 248, 0.9);
+            --text-primary: #18212c;
+            --text-secondary: #68747a;
+            --accent: #0B3961;
+            --accent-light: #eef3f0;
+            --border: rgba(24, 33, 44, 0.12);
+            --progress-bg: #0B3961;
+            --highlight: #f8e08e;
+            --ruler-bg: rgba(11, 57, 97, 0.07);
+            --ruler-border: rgba(11, 57, 97, 0.22);
+            --scrollbar: rgba(24, 33, 44, 0.22);
+            --paper-shadow: 0 24px 70px rgba(31, 38, 45, 0.12);
+        }
+
+        body {
+            background-image:
+                radial-gradient(circle at 18% 18%, rgba(24, 33, 44, 0.045) 0 1px, transparent 1.8px),
+                radial-gradient(circle at 82% 22%, rgba(183, 121, 31, 0.07) 0 1px, transparent 1.8px),
+                linear-gradient(115deg, transparent 0 62%, rgba(24, 33, 44, 0.035) 62% 62.6%, transparent 62.6%);
+            background-size: 22px 22px, 31px 31px, 100% 100%;
+            position: relative;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            border: 1px solid rgba(24, 33, 44, 0.08);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(246, 241, 230, 0.72)),
+                repeating-linear-gradient(0deg, transparent 0 30px, rgba(24, 33, 44, 0.07) 31px);
+            box-shadow: 0 22px 55px rgba(31, 38, 45, 0.08);
+            border-radius: 8px;
+        }
+
+        body::before {
+            width: 280px;
+            height: 190px;
+            right: 7vw;
+            top: 96px;
+            transform: rotate(5deg);
+            animation: reader-sheet-a 16s ease-in-out infinite;
+        }
+
+        body::after {
+            width: 210px;
+            height: 150px;
+            left: 324px;
+            bottom: 60px;
+            transform: rotate(-7deg);
+            animation: reader-sheet-b 14s ease-in-out infinite;
+        }
+
+        #topbar {
+            top: 14px;
+            left: 16px;
+            right: 16px;
+            height: 58px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: rgba(255, 253, 248, 0.88);
+            box-shadow: 0 14px 40px rgba(31, 38, 45, 0.09);
+            backdrop-filter: blur(18px);
+        }
+
+        #top-progress {
+            top: 0;
+            background: var(--accent);
+            height: 3px;
+        }
+
+        #app-layout {
+            padding-top: 86px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #sidebar {
+            top: 86px;
+            left: 16px;
+            width: 292px;
+            height: calc(100vh - 102px);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: var(--bg-sidebar);
+            box-shadow: var(--paper-shadow);
+            backdrop-filter: blur(18px);
+            overflow: hidden auto;
+            z-index: 1000;
+        }
+
+        #content-area {
+            margin-left: 324px;
+            padding: 0 2rem 8rem;
+        }
+
+        #content-inner {
+            max-width: 900px;
+        }
+
+        .sidebar-section {
+            border-bottom: 1px solid var(--border);
+            padding: 1.15rem 1.25rem;
+        }
+
+        .sidebar-label {
+            letter-spacing: 0.18em;
+            color: #7c8587;
+        }
+
+        #ai-card {
+            background:
+                linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(255, 253, 248, 0.91)),
+                repeating-linear-gradient(0deg, transparent 0 34px, rgba(24, 33, 44, 0.035) 35px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--paper-shadow);
+        }
+
+        #ai-card > div:first-child,
+        #ai-card > div:last-child {
+            background: rgba(241, 236, 223, 0.52) !important;
+        }
+
+        .ai-prose {
+            color: var(--text-primary);
+            letter-spacing: 0;
+        }
+
+        .ai-prose h1 {
+            border-bottom: 1px solid var(--border);
+            font-size: 1.75em;
+        }
+
+        .ai-prose h2 {
+            color: #24303a;
+        }
+
+        .ai-prose blockquote,
+        .mjx-container,
+        .ai-prose pre,
+        .ai-prose code {
+            border-color: var(--border);
+            background: rgba(238, 243, 240, 0.72);
+        }
+
+        .tool-panel-inner {
+            background: rgba(255, 253, 248, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 16px 44px rgba(31, 38, 45, 0.14);
+        }
+
+        .tool-btn {
+            border-radius: 12px;
+        }
+
+        .tool-btn.active {
+            background: var(--accent);
+            color: #fffdf8;
+        }
+
+        #theme-popup {
+            border-radius: 14px;
+            background: rgba(255, 253, 248, 0.96);
+            border-color: var(--border);
+        }
+
+        .theme-swatch {
+            border-radius: 6px;
+        }
+
+        #toc-nav .toc-link {
+            border-radius: 10px !important;
+        }
+
+        @keyframes reader-sheet-a {
+            0%, 100% { transform: translate(0, 0) rotate(5deg); }
+            50% { transform: translate(-14px, 8px) rotate(3deg); }
+        }
+
+        @keyframes reader-sheet-b {
+            0%, 100% { transform: translate(0, 0) rotate(-7deg); }
+            50% { transform: translate(10px, -12px) rotate(-4deg); }
+        }
+
+        @media (max-width: 1024px) {
+            body.sidebar-open {
+                overflow: hidden;
+            }
+
+            body::after {
+                display: none;
+            }
+
+            #topbar {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                z-index: 500;
+            }
+
+            #app-layout {
+                padding-top: 82px;
+            }
+
+            #sidebar {
+                top: 10px;
+                left: 10px;
+                width: min(292px, calc(100vw - 20px));
+                height: calc(100dvh - 20px);
+                z-index: 1000;
+                transform: translateX(calc(-100% - 16px));
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #sidebar-overlay {
+                z-index: 990;
+            }
+
+            #content-area {
+                margin-left: 0;
+                padding: 0 1rem 8rem;
+            }
+
+            #ai-card {
+                border-radius: 16px;
+            }
+
+            .ai-prose {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body::before {
+                width: 170px;
+                height: 120px;
+                right: -40px;
+                top: 128px;
+            }
+
+            #topbar {
+                padding: 0 0.75rem;
+                gap: 0.55rem;
+            }
+
+            #tool-panel {
+                left: 0;
+                right: 0;
+                bottom: 0;
+                transform: none;
+                z-index: 600;
+            }
+
+            .tool-panel-inner {
+                width: 100%;
+                max-width: none;
+                padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom));
+                border-radius: 20px 20px 0 0;
+                border-right: 0;
+                border-bottom: 0;
+                border-left: 0;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                gap: 0.5rem;
+                overflow-x: auto;
+                overscroll-behavior-x: contain;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, black calc(100% - 40px), transparent 100%);
+            }
+
+            .tool-panel-inner::-webkit-scrollbar {
+                display: none;
+            }
+
+            .tool-btn {
+                width: 44px;
+                height: 44px;
+                flex: 0 0 44px;
+                padding: 0;
+                border-radius: 14px;
+                background: var(--accent-light);
+            }
+
+            .speed-btn {
+                min-width: 64px;
+                height: 40px;
+                flex: 0 0 auto;
+                padding: 0 0.85rem;
+                border-radius: 14px;
+                background: var(--accent-light);
+            }
+
+            .tool-sep {
+                flex: 0 0 1px;
+                height: 30px;
+                background: var(--border);
+            }
+
+            #search-popup {
+                position: fixed;
+                left: 10px;
+                right: 10px;
+                bottom: calc(64px + env(safe-area-inset-bottom));
+                width: auto;
+                transform: none;
+                padding: 0.55rem;
+                z-index: 65;
+            }
+
+            #theme-popup {
+                position: fixed;
+                right: 10px;
+                bottom: calc(64px + env(safe-area-inset-bottom));
+                z-index: 65;
+            }
+
+            #reader-toast {
+                bottom: calc(4.8rem + env(safe-area-inset-bottom));
+            }
+
+            #ai-content-main {
+                padding: 1.5rem 1.15rem 1.5rem !important;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .tool-sep {
+                display: none;
+            }
+
+            .tool-panel-inner {
+                gap: 0.3rem;
+            }
         }
 
         /* ═══════════════════════════════════════════
@@ -884,6 +1321,93 @@
     <!-- Mobile sidebar overlay -->
     <div id="sidebar-overlay" class="no-print" onclick="closeSidebar()"></div>
 
+    <!-- ──────────── FIXED SIDEBAR ──────────── -->
+    <aside id="sidebar" class="no-print">
+
+        <!-- Logo block -->
+        <div class="sidebar-section" style="text-align:center;padding:1.5rem 1.25rem">
+            <div style="display:inline-flex;flex-direction:column;align-items:center;gap:0.6rem">
+                <div
+                    style="width:64px;height:64px;background:var(--accent-light);border-radius:1.25rem;display:flex;align-items:center;justify-content:center;border:2px solid var(--border)">
+                    <img src="{{ asset('images/logo_without_bg.png') }}"
+                        style="width:38px;height:38px;object-fit:contain" alt="Tushun">
+                </div>
+                <div>
+                    <div style="font-weight:800;font-size:1rem;color:var(--text-primary);letter-spacing:0.05em">
+                        TUSHUN</div>
+                    <div
+                        style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);margin-top:2px">
+                        Sizning yordamchingiz</div>
+                </div>
+                <div
+                    style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--accent-light);border-radius:999px;border:1px solid var(--border)">
+                    <span style="width:7px;height:7px;background:#22c55e;border-radius:50%;flex-shrink:0"></span>
+                    <span
+                        style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-secondary)">Tahlil
+                        tayyor</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reading progress ring -->
+        <div class="sidebar-section">
+            <div class="sidebar-label">O'qish progressi</div>
+            <div id="progress-ring-container">
+                <svg width="90" height="90" viewBox="0 0 100 100">
+                    <circle class="progress-ring-track" cx="50" cy="50" r="45" />
+                    <circle class="progress-ring-fill" id="ring-fill" cx="50" cy="50" r="45" />
+                    <text x="50" y="55" text-anchor="middle" fill="var(--text-primary)"
+                        style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:900"
+                        id="ring-text">0%</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Reading info -->
+        <div class="sidebar-section">
+            <div class="sidebar-label">Ma'lumot</div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
+                    <span class="material-symbols-outlined"
+                        style="font-size:16px;color:var(--accent)">schedule</span>
+                    <span style="color:var(--text-secondary)" id="read-time-sidebar">Hisoblanyapti...</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
+                    <span class="material-symbols-outlined" style="font-size:16px;color:var(--accent)">timer</span>
+                    <span style="color:var(--text-secondary)">Sessiya: <strong style="color:var(--text-primary)"
+                            id="session-timer-sb">00:00</strong></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
+                    <span class="material-symbols-outlined"
+                        style="font-size:16px;color:var(--accent)">article</span>
+                    <span style="color:var(--text-secondary)" id="word-count-sidebar">— so&#x02BC;z</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
+                    <span class="material-symbols-outlined"
+                        style="font-size:16px;color:var(--accent)">bookmark</span>
+                    <span style="color:var(--text-secondary)" id="saved-position-sidebar">Joy saqlanmagan</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Print -->
+        <div class="sidebar-section">
+            <div class="sidebar-label">Eksport</div>
+            <button onclick="window.print()"
+                style="width:100%;display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.625rem 1rem;background:var(--accent);color:var(--bg-card);border:none;border-radius:0.75rem;font-size:0.82rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;letter-spacing:0.03em"
+                onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                <span class="material-symbols-outlined" style="font-size:17px">print</span>
+                PDF sifatida saqlash
+            </button>
+        </div>
+
+        <!-- Table of contents (auto-generated) -->
+        <div class="sidebar-section" id="toc-section" style="flex:1;overflow-y:auto">
+            <div class="sidebar-label">Mundarija</div>
+            <nav id="toc-nav" style="display:flex;flex-direction:column;gap:0.25rem"></nav>
+        </div>
+    </aside>
+
     <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
     <header id="topbar" class="no-print">
         <!-- Mobile sidebar toggle -->
@@ -903,8 +1427,8 @@
         <div style="display:flex;align-items:center;gap:0.5rem">
             <div
                 style="width:28px;height:28px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-                <img src="{{ secure_asset('images/logo_without_bg.png') }}"
-                    style="width:18px;height:18px;object-fit:contain" alt="T">
+                <img src="{{ asset('images/logo_without_bg.png') }}" style="width:18px;height:18px;object-fit:contain"
+                    alt="T">
             </div>
             <span
                 style="font-weight:800;font-size:0.95rem;letter-spacing:0.08em;color:var(--text-primary)">TUSHUN</span>
@@ -925,88 +1449,6 @@
 
     <!-- ═══════════════════════════════ LAYOUT ═══════════════════════════════ -->
     <div id="app-layout">
-
-        <!-- ──────────── FIXED SIDEBAR ──────────── -->
-        <aside id="sidebar" class="no-print">
-
-            <!-- Logo block -->
-            <div class="sidebar-section" style="text-align:center;padding:1.5rem 1.25rem">
-                <div style="display:inline-flex;flex-direction:column;align-items:center;gap:0.6rem">
-                    <div
-                        style="width:64px;height:64px;background:var(--accent-light);border-radius:1.25rem;display:flex;align-items:center;justify-content:center;border:2px solid var(--border)">
-                        <img src="{{ secure_asset('images/logo_without_bg.png') }}"
-                            style="width:38px;height:38px;object-fit:contain" alt="Tushun">
-                    </div>
-                    <div>
-                        <div style="font-weight:800;font-size:1rem;color:var(--text-primary);letter-spacing:0.05em">
-                            TUSHUN</div>
-                        <div
-                            style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);margin-top:2px">
-                            Sizning yordamchingiz</div>
-                    </div>
-                    <div
-                        style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:var(--accent-light);border-radius:999px;border:1px solid var(--border)">
-                        <span style="width:7px;height:7px;background:#22c55e;border-radius:50%;flex-shrink:0"></span>
-                        <span
-                            style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-secondary)">Tahlil
-                            tayyor</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reading progress ring -->
-            <div class="sidebar-section">
-                <div class="sidebar-label">O'qish progressi</div>
-                <div id="progress-ring-container">
-                    <svg width="90" height="90" viewBox="0 0 100 100">
-                        <circle class="progress-ring-track" cx="50" cy="50" r="45" />
-                        <circle class="progress-ring-fill" id="ring-fill" cx="50" cy="50" r="45" />
-                        <text x="50" y="55" text-anchor="middle" fill="var(--text-primary)"
-                            style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:900"
-                            id="ring-text">0%</text>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Reading info -->
-            <div class="sidebar-section">
-                <div class="sidebar-label">Ma'lumot</div>
-                <div style="display:flex;flex-direction:column;gap:0.6rem">
-                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
-                        <span class="material-symbols-outlined"
-                            style="font-size:16px;color:var(--accent)">schedule</span>
-                        <span style="color:var(--text-secondary)" id="read-time-sidebar">Hisoblanyapti...</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
-                        <span class="material-symbols-outlined" style="font-size:16px;color:var(--accent)">timer</span>
-                        <span style="color:var(--text-secondary)">Sessiya: <strong style="color:var(--text-primary)"
-                                id="session-timer-sb">00:00</strong></span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem">
-                        <span class="material-symbols-outlined"
-                            style="font-size:16px;color:var(--accent)">article</span>
-                        <span style="color:var(--text-secondary)" id="word-count-sidebar">— so&#x02BC;z</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PDF Print -->
-            <div class="sidebar-section">
-                <div class="sidebar-label">Eksport</div>
-                <button onclick="window.print()"
-                    style="width:100%;display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.625rem 1rem;background:var(--accent);color:var(--bg-card);border:none;border-radius:0.75rem;font-size:0.82rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;letter-spacing:0.03em"
-                    onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
-                    <span class="material-symbols-outlined" style="font-size:17px">print</span>
-                    PDF sifatida saqlash
-                </button>
-            </div>
-
-            <!-- Table of contents (auto-generated) -->
-            <div class="sidebar-section" id="toc-section" style="flex:1;overflow-y:auto">
-                <div class="sidebar-label">Mundarija</div>
-                <nav id="toc-nav" style="display:flex;flex-direction:column;gap:0.25rem"></nav>
-            </div>
-        </aside>
 
         <!-- ──────────── MAIN CONTENT ──────────── -->
         <main id="content-area">
@@ -1100,6 +1542,31 @@
 
             <div class="tool-sep"></div>
 
+            <!-- Search / copy / position -->
+            <div style="position:relative">
+                <button class="tool-btn" id="btn-search" title="Matndan qidirish">
+                    <span class="material-symbols-outlined" style="font-size:18px">search</span>
+                </button>
+                <div id="search-popup">
+                    <input id="reader-search-input" type="search" placeholder="Tahlil ichidan qidirish">
+                    <span id="search-count">0/0</span>
+                    <button class="tool-btn" id="search-prev" title="Oldingi natija">
+                        <span class="material-symbols-outlined" style="font-size:18px">keyboard_arrow_up</span>
+                    </button>
+                    <button class="tool-btn" id="search-next" title="Keyingi natija">
+                        <span class="material-symbols-outlined" style="font-size:18px">keyboard_arrow_down</span>
+                    </button>
+                </div>
+            </div>
+            <button class="tool-btn" id="btn-copy-content" title="Tahlil matnini nusxalash">
+                <span class="material-symbols-outlined" style="font-size:18px">content_copy</span>
+            </button>
+            <button class="tool-btn" id="btn-save-position" title="O'qilgan joyni saqlash">
+                <span class="material-symbols-outlined" style="font-size:18px">bookmark_add</span>
+            </button>
+
+            <div class="tool-sep"></div>
+
             <!-- Auto scroll: play/pause -->
             <button class="tool-btn" id="scroll-play" title="Avtomatik o'qish">
                 <span class="material-symbols-outlined" style="font-size:18px" id="scroll-icon">play_arrow</span>
@@ -1143,6 +1610,8 @@
         </div>
     </div>
 
+    <div id="reader-toast" class="no-print" role="status" aria-live="polite"></div>
+
     <!-- ═══════════════════════════════ JAVASCRIPT ═══════════════════════════════ -->
 
     <script>
@@ -1159,17 +1628,69 @@
             let isBook = false;
             let focusObserver;
             let sessionSecs = 0;
+            let progressTicking = false;
+            let rulerTicking = false;
+            let latestMouseY = 0;
+            let saveTicking = false;
+            let searchMarks = [];
+            let currentSearchIndex = -1;
+            let searchTimer;
+            let toastTimer;
 
             const $body = $('body');
             const $content = $('#ai-content-main');
             const $ruler = $('#reading-ruler');
+            const $ringText = $('#ring-text');
+            const $topProgress = $('#top-progress');
+            const $mobilePct = $('#mobile-pct');
+            const $savedPosition = $('#saved-position-sidebar');
+            const $toast = $('#reader-toast');
+            const $searchPopup = $('#search-popup');
+            const $searchInput = $('#reader-search-input');
+            const $searchCount = $('#search-count');
+            const storagePrefix = 'tushun-reader-{{ $presentation->id }}';
+            const storageKeys = {
+                scroll: storagePrefix + '-scroll',
+                manualScroll: storagePrefix + '-manual-scroll',
+                theme: storagePrefix + '-theme',
+                fontSize: storagePrefix + '-font-size'
+            };
+
+            function showToast(message) {
+                clearTimeout(toastTimer);
+                $toast.text(message).addClass('show');
+                toastTimer = setTimeout(() => $toast.removeClass('show'), 2400);
+            }
+
+            function getScrollPct() {
+                const totalH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                return totalH > 0 ? Math.round((window.scrollY / totalH) * 100) : 0;
+            }
+
+            function scrollToPct(pct) {
+                const totalH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                window.scrollTo({
+                    top: Math.max(0, totalH * (pct / 100)),
+                    behavior: 'smooth'
+                });
+            }
 
             /* ─── Word count & Reading time ─────────── */
-            const words = $content.text().trim().split(/\s+/).length;
+            const contentText = $content.text().trim();
+            const words = contentText ? contentText.split(/\s+/).length : 0;
             const readMins = Math.max(1, Math.ceil(words / 180));
             const timeText = `${readMins} daqiqa o'qish`;
             $('#read-time-sidebar, #read-time-card').text(timeText);
             $('#word-count-sidebar').text(words.toLocaleString() + " so\u02BCz");
+
+            const storedFontSize = parseFloat(localStorage.getItem(storageKeys.fontSize));
+            if (!Number.isNaN(storedFontSize)) {
+                fontSize = storedFontSize;
+                $content.css('font-size', fontSize + 'rem');
+            }
+
+            const storedTheme = localStorage.getItem(storageKeys.theme);
+            if (storedTheme) $body.addClass(storedTheme);
 
             /* ─── Session timer ─────────────────────── */
             setInterval(() => {
@@ -1191,10 +1712,12 @@
 
             /* ─── Auto-generate TOC ─────────────────── */
             const $toc = $('#toc-nav');
+            const headingElements = [];
             let hIdx = 0;
             $content.find('h1, h2, h3').each(function() {
                 const id = 'heading-' + (hIdx++);
                 $(this).attr('id', id);
+                headingElements.push(this);
                 const level = this.tagName.toLowerCase();
                 const indent = level === 'h1' ? 0 : level === 'h2' ? 12 : 22;
                 const fsize = level === 'h1' ? '0.8rem' : '0.75rem';
@@ -1211,6 +1734,7 @@
                 >${$(this).text()}</a>`
                 );
             });
+            const $tocLinks = $toc.find('.toc-link');
 
             window.smoothScrollTo = (id) => {
                 const el = document.getElementById(id);
@@ -1225,22 +1749,65 @@
             const ringFill = document.getElementById('ring-fill');
             const circumference = 2 * Math.PI * 45; // 283
 
-            function updateProgress() {
-                const winScroll = document.documentElement.scrollTop;
-                const totalH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                const pct = totalH > 0 ? Math.round((winScroll / totalH) * 100) : 0;
+            function updateActiveToc() {
+                if (!headingElements.length) return;
+                let activeId = headingElements[0].id;
+                for (const heading of headingElements) {
+                    if (heading.getBoundingClientRect().top <= 96) activeId = heading.id;
+                    else break;
+                }
+                $tocLinks.css({
+                    background: 'transparent',
+                    color: 'var(--text-secondary)'
+                });
+                $tocLinks.filter(`[href="#${activeId}"]`).css({
+                    background: 'var(--accent-light)',
+                    color: 'var(--accent)'
+                });
+            }
 
+            function updateProgressNow() {
+                const pct = getScrollPct();
                 if (pct > maxReadPct) {
                     maxReadPct = pct;
                     const offset = circumference - (maxReadPct / 100) * circumference;
                     ringFill.style.strokeDashoffset = offset;
-                    $('#ring-text').text(maxReadPct + '%');
-                    $('#top-progress').css('width', maxReadPct + '%');
-                    $('#mobile-pct').text(maxReadPct + '%');
+                    $ringText.text(maxReadPct + '%');
+                    $topProgress.css('width', maxReadPct + '%');
+                    $mobilePct.text(maxReadPct + '%');
+                }
+                updateActiveToc();
+                progressTicking = false;
+            }
+
+            function updateProgress() {
+                if (!progressTicking) {
+                    progressTicking = true;
+                    requestAnimationFrame(updateProgressNow);
                 }
             }
 
-            $(window).on('scroll', updateProgress);
+            function saveAutoPosition() {
+                if (saveTicking) return;
+                saveTicking = true;
+                setTimeout(() => {
+                    localStorage.setItem(storageKeys.scroll, String(getScrollPct()));
+                    saveTicking = false;
+                }, 800);
+            }
+
+            $(window).on('scroll', function() {
+                updateProgress();
+                saveAutoPosition();
+            });
+
+            const savedManualPct = parseInt(localStorage.getItem(storageKeys.manualScroll), 10);
+            if (!Number.isNaN(savedManualPct) && savedManualPct > 3) {
+                $savedPosition.text(savedManualPct + '% da saqlangan');
+                showToast('Oldingi o\'qilgan joy saqlangan');
+            }
+
+            updateProgress();
 
             /* ─── Highlight on text selection ──────── */
             $content.on('mouseup', function() {
@@ -1266,6 +1833,7 @@
             /* ─── Clear highlights ──────────────────── */
             $('#btn-clear-hl').on('click', () => {
                 $('.highlight-marker').contents().unwrap();
+                clearSearchMarks();
             });
 
             /* ─── Font size ─────────────────────────── */
@@ -1273,12 +1841,14 @@
                 if (fontSize < 1.8) {
                     fontSize = +(fontSize + 0.075).toFixed(3);
                     $content.css('font-size', fontSize + 'rem');
+                    localStorage.setItem(storageKeys.fontSize, String(fontSize));
                 }
             });
             $('#btn-font-down').on('click', () => {
                 if (fontSize > 0.8) {
                     fontSize = +(fontSize - 0.075).toFixed(3);
                     $content.css('font-size', fontSize + 'rem');
+                    localStorage.setItem(storageKeys.fontSize, String(fontSize));
                 }
             });
 
@@ -1308,9 +1878,8 @@
                             }
                         });
                     }, opts);
-                    $content.find('p, li').each(function() {
-                        focusObserver.observe(this);
-                    });
+                    const focusTargets = $content.find('p, li').toArray();
+                    focusTargets.forEach(target => focusObserver.observe(target));
                 } else {
                     $body.removeClass('focus-mode');
                     $('.active-focus').removeClass('active-focus');
@@ -1326,7 +1895,15 @@
             });
 
             $(document).on('mousemove', e => {
-                if (isRuler) $ruler.css('top', (e.clientY - 22) + 'px');
+                if (!isRuler) return;
+                latestMouseY = e.clientY;
+                if (!rulerTicking) {
+                    rulerTicking = true;
+                    requestAnimationFrame(() => {
+                        $ruler.css('top', (latestMouseY - 22) + 'px');
+                        rulerTicking = false;
+                    });
+                }
             });
 
             /* ─── Auto scroll ───────────────────────── */
@@ -1379,12 +1956,160 @@
                 }
             });
 
+            /* ─── Search in reader ──────────────────── */
+            function clearSearchMarks() {
+                searchMarks.forEach(mark => {
+                    const parent = mark.parentNode;
+                    if (!parent) return;
+                    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+                    parent.removeChild(mark);
+                    parent.normalize();
+                });
+                searchMarks = [];
+                currentSearchIndex = -1;
+                $searchCount.text('0/0');
+            }
+
+            function highlightSearch(term) {
+                clearSearchMarks();
+                const query = term.trim();
+                if (query.length < 2) return;
+
+                const walker = document.createTreeWalker(
+                    $content[0],
+                    NodeFilter.SHOW_TEXT, {
+                        acceptNode(node) {
+                            if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+                            if ($(node.parentNode).closest('script,style,textarea,pre,code,.MathJax,.search-mark').length) {
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                            return node.nodeValue.toLowerCase().includes(query.toLowerCase()) ?
+                                NodeFilter.FILTER_ACCEPT :
+                                NodeFilter.FILTER_REJECT;
+                        }
+                    }
+                );
+
+                const nodes = [];
+                while (walker.nextNode()) nodes.push(walker.currentNode);
+
+                nodes.forEach(node => {
+                    const text = node.nodeValue;
+                    const lower = text.toLowerCase();
+                    const q = query.toLowerCase();
+                    const fragment = document.createDocumentFragment();
+                    let start = 0;
+                    let idx = lower.indexOf(q);
+
+                    while (idx !== -1) {
+                        fragment.appendChild(document.createTextNode(text.slice(start, idx)));
+                        const mark = document.createElement('span');
+                        mark.className = 'search-mark';
+                        mark.textContent = text.slice(idx, idx + query.length);
+                        fragment.appendChild(mark);
+                        searchMarks.push(mark);
+                        start = idx + query.length;
+                        idx = lower.indexOf(q, start);
+                    }
+
+                    fragment.appendChild(document.createTextNode(text.slice(start)));
+                    node.parentNode.replaceChild(fragment, node);
+                });
+
+                if (searchMarks.length) {
+                    currentSearchIndex = 0;
+                    goToSearchMark(0);
+                } else {
+                    $searchCount.text('0/0');
+                }
+            }
+
+            function goToSearchMark(index) {
+                if (!searchMarks.length) return;
+                currentSearchIndex = (index + searchMarks.length) % searchMarks.length;
+                searchMarks.forEach(mark => mark.classList.remove('current'));
+                const current = searchMarks[currentSearchIndex];
+                current.classList.add('current');
+                current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                $searchCount.text((currentSearchIndex + 1) + '/' + searchMarks.length);
+            }
+
+            $('#btn-search').on('click', e => {
+                e.stopPropagation();
+                $searchPopup.toggleClass('open');
+                if ($searchPopup.hasClass('open')) {
+                    setTimeout(() => $searchInput.trigger('focus'), 50);
+                }
+            });
+
+            $searchPopup.on('click', e => e.stopPropagation());
+            $searchInput.on('input', function() {
+                clearTimeout(searchTimer);
+                const term = this.value;
+                searchTimer = setTimeout(() => highlightSearch(term), 180);
+            });
+            $('#search-next').on('click', () => goToSearchMark(currentSearchIndex + 1));
+            $('#search-prev').on('click', () => goToSearchMark(currentSearchIndex - 1));
+
+            /* ─── Copy content ──────────────────────── */
+            function copyText(text) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    return navigator.clipboard.writeText(text);
+                }
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                textarea.remove();
+                return Promise.resolve();
+            }
+
+            $('#btn-copy-content').on('click', function() {
+                copyText($content.text().trim()).then(() => {
+                    showToast('Tahlil matni nusxalandi');
+                });
+            });
+
+            /* ─── Saved reading position ────────────── */
+            $('#btn-save-position').on('click', function() {
+                const pct = getScrollPct();
+                localStorage.setItem(storageKeys.manualScroll, String(pct));
+                $savedPosition.text(pct + '% da saqlangan');
+                showToast('O\'qilgan joy saqlandi');
+            });
+
+            $savedPosition.on('click', function() {
+                const pct = parseInt(localStorage.getItem(storageKeys.manualScroll), 10);
+                if (!Number.isNaN(pct)) scrollToPct(pct);
+            }).css('cursor', 'pointer');
+
+            $(document).on('keydown', function(e) {
+                const tag = e.target.tagName.toLowerCase();
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                if (tag === 'input' || tag === 'textarea') return;
+                if (e.key === '/') {
+                    e.preventDefault();
+                    $('#btn-search').trigger('click');
+                }
+                if (e.key.toLowerCase() === 'b') $('#btn-save-position').trigger('click');
+                if (e.key.toLowerCase() === 'c') $('#btn-copy-content').trigger('click');
+            });
+
             /* ─── Theme picker ──────────────────────── */
             $('#btn-theme').on('click', e => {
                 e.stopPropagation();
                 $('#theme-popup').toggleClass('open');
             });
-            $(document).on('click', () => $('#theme-popup').removeClass('open'));
+            $(document).on('click', () => {
+                $('#theme-popup').removeClass('open');
+                $searchPopup.removeClass('open');
+            });
             $('#theme-popup').on('click', e => e.stopPropagation());
 
             const allThemes = ['theme-dark', 'theme-warm', 'theme-forest', 'theme-sepia'];
@@ -1392,6 +2117,7 @@
                 $body.removeClass(allThemes.join(' '));
                 const t = $(this).data('theme');
                 if (t) $body.addClass(t);
+                localStorage.setItem(storageKeys.theme, t || '');
                 $('#theme-popup').removeClass('open');
             });
 
@@ -1399,10 +2125,12 @@
             window.toggleSidebar = () => {
                 $('#sidebar').toggleClass('open');
                 $('#sidebar-overlay').toggleClass('open');
+                $body.toggleClass('sidebar-open', $('#sidebar').hasClass('open'));
             };
             window.closeSidebar = () => {
                 $('#sidebar').removeClass('open');
                 $('#sidebar-overlay').removeClass('open');
+                $body.removeClass('sidebar-open');
             };
         });
     </script>

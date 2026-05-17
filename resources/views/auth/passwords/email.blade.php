@@ -55,7 +55,7 @@
         <div class="hidden lg:flex lg:w-1/2 illustration-container flex-col justify-between p-12 text-white relative">
             <div class="flex items-center gap-3 z-10">
                 <div class="size-10 bg-white backdrop-blur-md rounded-lg flex items-center justify-center">
-                    <img src="{{ secure_asset('images/logo_without_bg.png') }}" alt="Tushun Logo" srcset=""
+                    <img src="{{ asset('images/logo_without_bg.png') }}" alt="Tushun Logo" srcset=""
                         class="size-6">
                 </div>
                 <h2 class="text-2xl font-bold tracking-tight">TUSHUN</h2>
@@ -103,7 +103,7 @@
             class="w-full lg:w-1/2 flex flex-col items-center justify-center px-6 md:px-12 lg:px-24 bg-white dark:bg-background-dark">
             <!-- Mobile Logo -->
             <div class="lg:hidden absolute top-8 left-8 flex items-center gap-2">
-                <img src="{{ secure_asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo" class="size-10"
+                <img src="{{ asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo" class="size-10"
                     srcset="">
                 <span class="font-bold text-xl text-primary">TUSHUN</span>
             </div>

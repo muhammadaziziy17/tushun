@@ -75,7 +75,7 @@
         class="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-20 lg:px-40 flex items-center justify-between glass-effect">
         <a href="/" class="flex items-center gap-2 group cursor-pointer">
             <div class="text-white p-1.5 rounded-lg flex items-center justify-center w-8 h-8">
-                <img src="{{ secure_asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo" srcset="">
+                <img src="{{ asset('images/logo_without_bg.png') }}" alt="TUSHUN Logo" srcset="">
             </div>
             <h2 class="text-primary text-xl font-bold leading-tight tracking-tight uppercase">TUSHUN</h2>
         </a>
